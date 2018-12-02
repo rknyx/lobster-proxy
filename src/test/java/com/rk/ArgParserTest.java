@@ -1,13 +1,12 @@
 package com.rk;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.rk.domain.Endpoint;
+import com.rk.domain.Endpoints;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 public class ArgParserTest {
 
@@ -19,22 +18,21 @@ public class ArgParserTest {
     @Test
     public void singlePortMappingTest() {
         final String[] args = "4545 -> 127.0.0.1:1212".split(" ");
-        final Map<Endpoint, List<Endpoint>> res = new ArgParser(args).parse();
-        Assert.assertEquals(ImmutableMap.of(
-                new Endpoint("127.0.0.1", 4545),
-                Collections.singletonList(new Endpoint("127.0.0.1", 1212))
-        ), res);
+        final Set<Endpoints> actual = new ArgParser(args).parse();
+        final Set<Endpoints> expected = ImmutableSet.of(
+                Endpoints.from(Endpoint.fromLocalhostPort(4545), Endpoint.fromLocalhostPort(1212)));
+
+        Assert.assertEquals(expected, actual);
     }
 
     @Test
     public void multiplPortMappingTest() {
-        final String[] args = "4545,4546 -> 127.0.0.1:1212,1213".split(" ");
-        final Map<Endpoint, List<Endpoint>> res = new ArgParser(args).parse();
-        Assert.assertEquals(ImmutableMap.of(
-                new Endpoint("127.0.0.1", 4545),
-                ImmutableList.of(new Endpoint("127.0.0.1", 1212), new Endpoint("127.0.0.1", 1213)),
-                new Endpoint("127.0.0.1", 4546),
-                ImmutableList.of(new Endpoint("127.0.0.1", 1212), new Endpoint("127.0.0.1", 1213))
-        ), res);
+        final String[] args = "4545,4546 -> 8.8.8.8:1212,1213".split(" ");
+        final Set<Endpoints> actual = new ArgParser(args).parse();
+        final Set<Endpoints> expected = ImmutableSet.of(
+                Endpoints.from(Endpoint.fromLocalhostPort(4545), Endpoint.from("8.8.8.8", 1212)),
+                Endpoints.from(Endpoint.fromLocalhostPort(4545), Endpoint.from("8.8.8.8", 1213)),
+                Endpoints.from(Endpoint.fromLocalhostPort(4546), Endpoint.from("8.8.8.8", 1213)),
+                Endpoints.from(Endpoint.fromLocalhostPort(4546), Endpoint.from("8.8.8.8", 1212)));
     }
 }

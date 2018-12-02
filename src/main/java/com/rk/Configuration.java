@@ -1,19 +1,20 @@
 package com.rk;
 
-import java.util.List;
-import java.util.Map;
+import com.rk.domain.Endpoints;
+
+import java.util.Set;
 
 public class Configuration {
-    private Map<Endpoint, List<Endpoint>> map;
+    private Set<Endpoints> endpoints;
     boolean logContentToStdOut;
 
-    public Configuration(Map<Endpoint, List<Endpoint>>  map, boolean logContentToStdOut) {
-        this.map = map;
+    public Configuration(Set<Endpoints> map, boolean logContentToStdOut) {
+        this.endpoints = map;
         this.logContentToStdOut = logContentToStdOut;
     }
 
-    public Map<Endpoint, List<Endpoint>> getMap() {
-        return map;
+    public Set<Endpoints> getEndpoints() {
+        return endpoints;
     }
 
     public boolean isLogContentToStdOut() {

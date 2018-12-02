@@ -1,11 +1,12 @@
 package com.rk;
 
+import com.rk.domain.Endpoint;
+import com.rk.domain.TransmitterResult;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.io.LoggerOutputStream;
 
 import java.io.IOException;
 import java.io.InputStream;

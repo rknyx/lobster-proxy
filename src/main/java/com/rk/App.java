@@ -1,15 +1,16 @@
 package com.rk;
 
 
-import java.util.List;
-import java.util.Map;
+import com.rk.domain.Endpoints;
+
+import java.util.Set;
 
 public class App {
     public static void main(String[] args) {
-        final Map<Endpoint, List<Endpoint>> portsMap = new ArgParser(args).parse(); //todo try catch
+        final Set<Endpoints> endpoints = new ArgParser(args).parse(); //todo try catch
 
-        final Configuration configuration = new Configuration(portsMap, false);
+        final Configuration configuration = new Configuration(endpoints, false);
 
-        portsMap.forEach((k, v) -> v.forEach(dst -> new PortListener(k, dst, configuration).run()));
+        endpoints.forEach(p -> new PortListener(p.getSrc(), p.getDst(), configuration).run());
     }
 }

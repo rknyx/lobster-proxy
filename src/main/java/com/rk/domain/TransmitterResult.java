@@ -1,4 +1,4 @@
-package com.rk;
+package com.rk.domain;
 
 public class TransmitterResult {
     private final long bytesTransmitted;

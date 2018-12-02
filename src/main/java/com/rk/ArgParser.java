@@ -1,16 +1,14 @@
 package com.rk;
 
-
-import org.apache.commons.collections4.ListUtils;
+import com.google.common.collect.ImmutableSet;
+import com.rk.domain.Endpoint;
+import com.rk.domain.Endpoints;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -31,22 +29,21 @@ public class ArgParser {
                 .collect(Collectors.joining(""));
     }
 
-    public Map<Endpoint, List<Endpoint>> parse() {
+    public Set<Endpoints> parse() {
         return parseDelimiter(arg, SEMICOLON, ANY)
                 .map(this::parseMapping)
-                .flatMap(map -> map.entrySet().stream())
-                .collect(Collectors.toMap(e -> e.getKey(),
-                        v -> Collections.singletonList(v.getValue()),
-                        ListUtils::union));
+                .reduce((a, b) -> ImmutableSet.<Endpoints>builder().addAll(a).addAll(b).build())
+                .orElse(Collections.emptySet());
     }
 
-    private Map<Endpoint, Endpoint> parseMapping(String str) {
+    private Set<Endpoints> parseMapping(String str) {
         final Iterator<String> partsIterator = parseDelimiter(str, ARROW, 1).iterator();
 
         final List<Endpoint> sources = parseSource(partsIterator.next()).collect(Collectors.toList());
+
         return parseDestinations(partsIterator.next())
-                .flatMap(dst -> sources.stream().map(src -> ImmutablePair.of(src, dst)))
-                .collect(Collectors.toMap(Pair::getLeft, Pair::getRight, (a, b) -> b));
+                .flatMap(dst -> sources.stream().map(src -> Endpoints.from(src, dst)))
+                .collect(Collectors.toSet());
     }
 
     private Stream<Endpoint> parseSource(String src) {
