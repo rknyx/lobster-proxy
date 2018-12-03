@@ -35,4 +35,9 @@ public class ArgParserTest {
                 Endpoints.from(Endpoint.fromLocalhostPort(4546), Endpoint.from("8.8.8.8", 1213)),
                 Endpoints.from(Endpoint.fromLocalhostPort(4546), Endpoint.from("8.8.8.8", 1212)));
     }
+
+    @Test(expected = ArgParser.ArgParseException.class)
+    public void incorrectArgsTest() {
+        new ArgParser(new String[] {"Hello World"}).parse();
+    }
 }

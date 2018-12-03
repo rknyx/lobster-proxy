@@ -20,6 +20,12 @@ public class ArgParser {
     private static final int MAX_TCP_PORT = 65535;
     private static final String LOCALHOST = "127.0.0.1";
 
+    public class ArgParseException extends RuntimeException {
+        public ArgParseException(String msg) {
+            super(msg);
+        }
+    }
+
     final String arg;
 
     public ArgParser(String[] args) {
@@ -66,11 +72,11 @@ public class ArgParser {
         try {
             int portNumber = Integer.parseInt(port);
             if (portNumber < 0 || portNumber > MAX_TCP_PORT) {
-                throw new IllegalArgumentException(String.format("Port number should be in range [0..65535], got '%s'", port));
+                throw new ArgParseException(String.format("Port number should be in range [0..65535], got '%s'", port));
             }
             return portNumber;
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(String.format("'%s' should be a valid port", port));
+            throw new ArgParseException(String.format("'%s' should be a valid port", port));
         }
     }
 
@@ -79,15 +85,15 @@ public class ArgParser {
         Objects.requireNonNull(delimiter);
 
         if (str.isEmpty()) {
-            throw new IllegalArgumentException("Arg string cannot be empty");
+            throw new ArgParseException("Arg string cannot be empty");
         }
 
         if (count != ANY && (!str.contains(delimiter) || str.split(delimiter).length != count + 1)) {
-            throw new IllegalArgumentException(String.format("String '%s' is expected to contains '%s' occurence of '%s'",
+            throw new ArgParseException(String.format("String '%s' is expected to contains '%s' occurence of '%s'",
                     str, count, delimiter));
         }
         if (splitAndTrim(str, delimiter).anyMatch(StringUtils::isBlank)) {
-            throw new IllegalArgumentException(String.format("Delimiter '%s' should split string '%s' into non-empty parts",
+            throw new ArgParseException(String.format("Delimiter '%s' should split string '%s' into non-empty parts",
                     delimiter, str));
         }
         return splitAndTrim(str, delimiter);
